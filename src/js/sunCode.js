@@ -9,7 +9,7 @@ function createSun(scene, sunTexture) {
   sun.position.set(400, 23.5, 0);
   scene.add(sun);
 
-  // Sun light with improved shadow settings
+  // Sun light - improved for better shadows
   const sunlight = new THREE.DirectionalLight(0xffffff, 4);
   sunlight.position.copy(sun.position);
   sunlight.castShadow = true;
@@ -20,7 +20,7 @@ function createSun(scene, sunTexture) {
   sunlight.shadow.camera.near = 0.5;
   sunlight.shadow.camera.far = 1000;
 
-  // Increase shadow camera frustum to capture the satellite's shadow properly
+  // Increase shadow camera frustum to capture the moon's shadow properly
   sunlight.shadow.camera.left = -150;
   sunlight.shadow.camera.right = 150;
   sunlight.shadow.camera.top = 150;
@@ -30,10 +30,6 @@ function createSun(scene, sunTexture) {
   sunlight.shadow.bias = -0.0001;
 
   scene.add(sunlight);
-
-  // Add a helper to visualize the shadow camera (useful for debugging)
-  // const shadowHelper = new THREE.CameraHelper(sunlight.shadow.camera);
-  // scene.add(shadowHelper);
 
   // Add a subtle ambient light to prevent completely dark shadows
   const ambientLight = new THREE.AmbientLight(0x404040, 0.2);

@@ -2,7 +2,6 @@ import * as dat from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { setupBackgroundAudio } from "./js/audio.js";
-import { createSatelliteOrbit } from "./js/atelliteOrbit.js";
 import { loadingTextures } from "./js/Textures.js";
 import { setupViewEvents } from "./js/viewEvents.js";
 import { createEarth } from "./planets/earthCode.js";

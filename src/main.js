@@ -1,12 +1,15 @@
+import * as dat from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import * as dat from "lil-gui";
 import { setupBackgroundAudio } from "./js/audio.js";
-import { createSatelliteOrbit } from "./js/satelliteOrbit.js";
+import { createSatelliteOrbit } from "./js/atelliteOrbit.js";
+import { loadingTextures } from "./js/Textures.js";
 import { setupViewEvents } from "./js/viewEvents.js";
-import { setupSolarSystem } from "./js/solarSystem.js";
-import { createEarth } from "./js/earthCode.js";
-import { createSun } from "./js/sunCode.js";
+import { createEarth } from "./planets/earthCode.js";
+import Moon from "./planets/Moon.js";
+import Sun from "./planets/Sun.js";
+import Satellite from "./js/Satellite.js";
+import SatelliteOrbit from "./js/satelliteOrbit.js";
 
 // Debug UI
 const gui = new dat.GUI({ title: "GalaxiX" });
@@ -20,74 +23,42 @@ const scene = new THREE.Scene();
 scene.add(new THREE.AmbientLight(0xffffff, 0.2));
 
 /*
- * Textures
+ * Loading all Textures
  */
-const textureLoader = new THREE.TextureLoader();
-const earthTexture = textureLoader.load(
-  "/textures/planets/earthTexture.jpg",
-  () => {
-    console.log("Earth texture has been uploaded");
-  },
-  () => {
-    console.log("Loading");
-  },
-  (error) => {
-    console.log(`Error ${error}`);
-  }
-);
-earthTexture.colorSpace = THREE.SRGBColorSpace;
-const earthNormalMap = textureLoader.load(
-  "/textures/planets/2k_earth_normal_map.tif"
-);
 
-const moonTexture = textureLoader.load(
-  "/textures/planets/moonTexture.jpg",
-  () => {
-    console.log("Moon texture has been uploaded");
-  },
-  () => {
-    console.log("Loading");
-  },
-  (error) => {
-    console.log(`Error ${error}`);
-  }
-);
-moonTexture.colorSpace = THREE.SRGBColorSpace;
-
-const sunTexture = textureLoader.load(
-  "/textures/planets/sunTexture.jpg",
-  () => {
-    console.log("Sun texture has been uploaded");
-  },
-  () => {
-    console.log("Loading");
-  },
-  (error) => {
-    console.log(`Error ${error}`);
-  }
-);
-sunTexture.colorSpace = THREE.SRGBColorSpace;
+const { earthTexture, earthNormalMap, moonTexture, sunTexture } =
+  loadingTextures(THREE);
 
 /**
- * Solar system
+ * Satellite
  */
-const { moon, satelliteModelRef, satelliteOrbitRadius, moonDistance } =
-  setupSolarSystem(
-    scene,
-    earthTexture,
-    earthNormalMap,
-    moonTexture,
-    sunTexture
-  );
+const satelliteObject = new Satellite(scene);
+const { satelliteModelRef, satelliteOrbitRadius } =
+  satelliteObject.createSatellite();
 
-const earth = createEarth(scene);
-const sun = createSun(scene, sunTexture);
-
-// Orbit
-const orbitLine = createSatelliteOrbit(satelliteOrbitRadius); // here more work
-scene.add(orbitLine);
-orbitLine.visible = false;
+// SatelliteOrbit
+const satelliteOrbit = new SatelliteOrbit(scene, satelliteOrbitRadius);
+const orbitLine = satelliteOrbit.createSatelliteOrbit();
 gui.add(orbitLine, "visible").name("Satellite axis helper");
+
+/*
+ * Creating the Earth
+ */
+const earth = createEarth(scene);
+
+/*
+ * Creating the Sun
+ */
+
+const sunObject = new Sun(scene, sunTexture);
+const sun = sunObject.createSun();
+
+/*
+ * Creating the Moon
+ */
+const moonObject = new Moon(scene, moonTexture);
+const moon = moonObject.createMoon();
+const moonDistance = moonObject.getMoonDistance();
 
 /**
  * Sizes
@@ -136,7 +107,6 @@ const clock = new THREE.Clock();
 // Animations
 const animate = () => {
   const elapsedTime = clock.getElapsedTime();
-  const delta = clock.getDelta();
 
   // Earth movement
   earth.update(elapsedTime * 0.05, sun.position);

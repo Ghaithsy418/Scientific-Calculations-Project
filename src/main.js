@@ -35,16 +35,53 @@ const {
 } = loadingTextures(THREE);
 
 /**
- * Satellite
+ * Satellite Configuration with GUI
  */
-const satelliteObject = new Satellite(scene);
-satelliteObject.createSatellite();
-const satelliteOrbitRadius = satelliteObject.getSatelliteOrbitRadius();
+//Creating a gui Folder for SatelliteOrbits
+const SatelliteOrbitsFolder = gui.addFolder("Satellites Orbits");
 
-// SatelliteOrbit
-const satelliteOrbit = new SatelliteOrbit(scene, satelliteOrbitRadius);
-const orbitLine = satelliteOrbit.createSatelliteOrbit();
-gui.add(orbitLine, "visible").name("Satellite axis helper");
+// Keep track of all satellites
+let satellites = [];
+
+const satelliteConfig = {
+  name: "First Satellite",
+  orbitRadius: 50,
+  size: 0.5,
+  createSatellite: function () {
+    // Create new satellite with current config values
+    const newSatellite = new Satellite(
+      this.name,
+      this.orbitRadius,
+      this.size,
+      scene,
+      SatelliteOrbitsFolder
+    );
+    newSatellite.createSatellite();
+
+    // Add to our satellites array
+    satellites.push(newSatellite);
+  },
+};
+
+// Add satellite controls to GUI
+const satelliteFolder = gui.addFolder("Satellite Creator");
+satelliteFolder.add(satelliteConfig, "name");
+satelliteFolder.add(satelliteConfig, "orbitRadius", 30, 100, 5);
+satelliteFolder.add(satelliteConfig, "size", 0.1, 1, 0.1);
+satelliteFolder
+  .add(satelliteConfig, "createSatellite")
+  .name("Create New Satellite");
+
+// Initialize the first satellite
+let satelliteObject = new Satellite(
+  satelliteConfig.name,
+  satelliteConfig.orbitRadius,
+  satelliteConfig.size,
+  scene,
+  SatelliteOrbitsFolder
+);
+satelliteObject.createSatellite();
+satellites.push(satelliteObject);
 
 /*
  * Creating the Earth
@@ -86,12 +123,12 @@ const sizes = {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(
-  75,
+  35,
   sizes.width / sizes.height,
   0.1,
-  1500
+  1e5
 );
-camera.position.set(0, 30, 100);
+camera.position.set(0, 5, 0);
 scene.add(camera);
 
 // Audio
@@ -128,11 +165,13 @@ const animate = () => {
   // Moon orbit
   moonObject.animateMoon(elapsedTime);
 
-  // Make sure the moon always faces the Earth
   moon.lookAt(earth.position);
 
-  // Satellite orbit
-  satelliteObject.animateSatellite(elapsedTime * 0.05, earth);
+  // Animate all satellites
+  satellites.forEach((satellite, index) => {
+    const speed = 0.05 + index * 0.01;
+    satellite.animateSatellite(elapsedTime * speed, earth);
+  });
 
   control.update();
   renderer.render(scene, camera);

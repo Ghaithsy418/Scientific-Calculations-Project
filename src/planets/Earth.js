@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { EARTH_DIAMETER } from "../js/constantDistances";
 
 export default class Earth {
   earth = null;
@@ -20,7 +21,11 @@ export default class Earth {
   }
 
   createClouds() {
-    const cloudsGeometry = new THREE.SphereGeometry(15.2, 64, 64);
+    const cloudsGeometry = new THREE.SphereGeometry(
+      EARTH_DIAMETER + 0.002,
+      64,
+      64
+    );
     const cloudsMaterial = new THREE.MeshPhongMaterial({
       map: this.earthCloudsTexture,
       transparent: true,
@@ -33,7 +38,11 @@ export default class Earth {
   }
 
   createAtmosphereGlow() {
-    const glowGeometry = new THREE.SphereGeometry(15.5, 32, 32);
+    const glowGeometry = new THREE.SphereGeometry(
+      EARTH_DIAMETER + 0.005,
+      32,
+      32
+    );
     const glowMaterial = new THREE.ShaderMaterial({
       uniforms: {
         c: { value: 0.2 },
@@ -71,7 +80,7 @@ export default class Earth {
   }
 
   createEarth() {
-    const earthGeometry = new THREE.SphereGeometry(15, 64, 64);
+    const earthGeometry = new THREE.SphereGeometry(EARTH_DIAMETER, 64, 64);
     const earthMaterial = new THREE.ShaderMaterial({
       uniforms: {
         dayTexture: { value: this.earthDayTexture },

@@ -1,8 +1,8 @@
 import * as THREE from "three";
+import { EARTH_MOON_DISTANCE, MOON_DIAMETER } from "../js/constantDistances";
 
 export default class Moon {
   moon = null;
-  moonDistance = 78;
 
   constructor(scene, moonTexture) {
     this.scene = scene;
@@ -11,7 +11,7 @@ export default class Moon {
 
   createMoon() {
     this.moon = new THREE.Mesh(
-      new THREE.SphereGeometry(6.7, 32, 32),
+      new THREE.SphereGeometry(MOON_DIAMETER, 32, 32),
       new THREE.MeshStandardMaterial({
         map: this.moonTexture,
         roughness: 0.8,
@@ -27,9 +27,9 @@ export default class Moon {
     const moonAngle =
       elapsedTime * ((2 * Math.PI) / (27.3 * 86400)) * 86400 * 0.25;
     this.moon.position.set(
-      Math.cos(moonAngle) * this.moonDistance,
+      Math.cos(moonAngle) * EARTH_MOON_DISTANCE,
       0,
-      Math.sin(moonAngle) * this.moonDistance
+      Math.sin(moonAngle) * EARTH_MOON_DISTANCE
     );
   }
 }

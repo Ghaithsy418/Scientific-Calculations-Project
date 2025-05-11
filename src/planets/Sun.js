@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { EARTH_SUN_DISTANCE, SUN_DIAMETER } from "../js/constantDistances";
 
 export default class Sun {
   constructor(scene, sunTexture) {
@@ -8,12 +9,13 @@ export default class Sun {
 
   createSun() {
     const sun = new THREE.Mesh(
-      new THREE.SphereGeometry(50, 64, 64),
+      new THREE.SphereGeometry(SUN_DIAMETER, 64, 64),
       new THREE.MeshBasicMaterial({
         map: this.sunTexture,
       })
     );
-    sun.position.set(400, 23.5, 0);
+    sun.position.set(EARTH_SUN_DISTANCE, 23.5, 0);
+    sun.scale.set(2, 2, 2);
     this.scene.add(sun);
 
     // Sun light

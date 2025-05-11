@@ -1,11 +1,15 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import SatelliteOrbit from "./satelliteOrbit";
 
 export default class Satellite {
-  satelliteOrbitRadius = 50;
   satelliteModel = null;
 
-  constructor(scene) {
+  constructor(name, distance, size, scene, gui) {
+    this.name = name;
+    this.distance = distance;
+    this.size = size;
     this.scene = scene;
+    this.gui = gui;
   }
 
   createSatellite() {
@@ -14,7 +18,7 @@ export default class Satellite {
       "models/satellite/scene.gltf",
       (gltf) => {
         this.satelliteModel = gltf.scene;
-        this.satelliteModel.scale.set(1.2, 1.2, 1.2);
+        this.satelliteModel.scale.set(this.size, this.size, this.size);
         this.satelliteModel.traverse((child) => {
           if (child.isMesh) {
             child.receiveShadow = true;
@@ -27,13 +31,18 @@ export default class Satellite {
       () => console.log("Loading satellite model..."),
       (error) => console.error("Error loading satellite model:", error?.message)
     );
+
+    //Satellite Orbit
+    const satelliteOrbit = new SatelliteOrbit(this.scene, this.distance);
+    const orbitLine = satelliteOrbit.createSatelliteOrbit();
+    this.gui.add(orbitLine, "visible").name(this.name);
   }
 
   animateSatellite(elapsedTime, earth) {
     if (this.satelliteModel) {
       const satAngle = -elapsedTime;
-      const x = Math.cos(satAngle) * this.satelliteOrbitRadius;
-      const z = Math.sin(satAngle) * this.satelliteOrbitRadius;
+      const x = Math.cos(satAngle) * this.distance;
+      const z = Math.sin(satAngle) * this.distance;
       this.satelliteModel.position.set(x, 0.3, z);
 
       // Get the Earth model from the earth object
@@ -47,9 +56,5 @@ export default class Satellite {
         this.satelliteModel.lookAt(new THREE.Vector3(0, 0, 0));
       }
     }
-  }
-
-  getSatelliteOrbitRadius() {
-    return this.satelliteOrbitRadius;
   }
 }

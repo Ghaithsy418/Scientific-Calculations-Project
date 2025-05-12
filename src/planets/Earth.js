@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import { EARTH_DIAMETER } from "../js/constantDistances";
+import {
+  EARTH_DIAMETER,
+  ATMOSPHERE_HEIGHT_FROM_EARTH,
+} from "../js/constantDistances";
 
 export default class Earth {
   earth = null;
@@ -38,45 +41,62 @@ export default class Earth {
   }
 
   createAtmosphereGlow() {
-    const glowGeometry = new THREE.SphereGeometry(
-      EARTH_DIAMETER + 0.005,
-      32,
-      32
-    );
-    const glowMaterial = new THREE.ShaderMaterial({
+    // Calculate atmosphere size based on Earth diameter and atmosphere height
+    const atmosphereSize = ATMOSPHERE_HEIGHT_FROM_EARTH;
+
+    // Create atmosphere geometry
+    const atmosphereGeometry = new THREE.SphereGeometry(atmosphereSize, 64, 64);
+
+    // Create shader material for atmosphere
+    const atmosphereMaterial = new THREE.ShaderMaterial({
       uniforms: {
-        c: { value: 0.2 },
-        p: { value: 5.5 },
-        glowColor: { value: new THREE.Color(0x0077ff) },
-        viewVector: { value: new THREE.Vector3(0, 0, 0) },
+        c: { value: 10 },
+        p: { value: 2.0 },
+        viewVector: { value: new THREE.Vector3(0, 0, 1) },
       },
       vertexShader: `
         uniform vec3 viewVector;
         uniform float c;
         uniform float p;
         varying float intensity;
-        void main(){
-            vec3 vNormal = normalize(normalMatrix * normal);
-            vec3 vNormel = normalize(normalMatrix * viewVector);
-            intensity = pow(c - dot(vNormal, vNormel), p);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        
+        void main() {
+          vec3 vNormal = normalize(normalMatrix * normal);
+          vec3 vNormel = normalize(normalMatrix * viewVector);
+          intensity = pow(c - dot(vNormal, vNormel), p);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
       fragmentShader: `
-        uniform vec3 glowColor;
+        uniform float c;
         varying float intensity;
-        void main(){
-            vec3 glow = glowColor * intensity;
-            gl_FragColor = vec4(glow, 1.0);
+        
+        void main() {
+          vec3 atmosphere = vec3(0.8, 0.9, 1.0); // Slightly blue tint for better visibility
+          gl_FragColor = vec4(atmosphere, intensity * 0.05); // Lower opacity for more clarity
         }
       `,
-      side: THREE.BackSide,
       blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
       transparent: true,
     });
-    this.glow = new THREE.Mesh(glowGeometry, glowMaterial);
 
-    this.scene.add(this.glow);
+    // Create atmosphere mesh
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    atmosphere.position.copy(
+      this.earth ? this.earth.position : new THREE.Vector3(0, 0, 0)
+    );
+
+    // Add atmosphere to scene
+    this.scene.add(atmosphere);
+
+    // Store reference to atmosphere
+    this.atmosphere = atmosphere;
+
+    // Also store it as glow since that's what updateEarth is looking for
+    this.glow = atmosphere;
+
+    return atmosphere;
   }
 
   createEarth() {

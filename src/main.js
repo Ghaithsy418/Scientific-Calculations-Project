@@ -2,13 +2,13 @@ import * as dat from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { setupBackgroundAudio } from "./js/audio.js";
+import Satellite from "./js/Satellite.js";
 import { loadingTextures } from "./js/Textures.js";
 import { setupViewEvents } from "./js/viewEvents.js";
+import Earth from "./planets/Earth.js";
 import Moon from "./planets/Moon.js";
 import Sun from "./planets/Sun.js";
-import Satellite from "./js/Satellite.js";
-import SatelliteOrbit from "./js/satelliteOrbit.js";
-import Earth from "./planets/Earth.js";
+import { MEO_ALTITUDE, SATELLITE_DIAMETER } from "./js/constantDistances";
 
 // Debug UI
 const gui = new dat.GUI({ title: "GalaxiX" });
@@ -45,8 +45,8 @@ let satellites = [];
 
 const satelliteConfig = {
   name: "First Satellite",
-  orbitRadius: 50,
-  size: 0.5,
+  orbitRadius: MEO_ALTITUDE,
+  size: SATELLITE_DIAMETER,
   createSatellite: function () {
     // Create new satellite with current config values
     const newSatellite = new Satellite(
@@ -66,8 +66,8 @@ const satelliteConfig = {
 // Add satellite controls to GUI
 const satelliteFolder = gui.addFolder("Satellite Creator");
 satelliteFolder.add(satelliteConfig, "name");
-satelliteFolder.add(satelliteConfig, "orbitRadius", 30, 100, 5);
-satelliteFolder.add(satelliteConfig, "size", 0.1, 1, 0.1);
+satelliteFolder.add(satelliteConfig, "orbitRadius", 0.0016, 0.5, 0.01);
+satelliteFolder.add(satelliteConfig, "size", 0.0001, 0.001, 0.0001);
 satelliteFolder
   .add(satelliteConfig, "createSatellite")
   .name("Create New Satellite");

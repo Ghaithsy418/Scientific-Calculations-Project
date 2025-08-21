@@ -14,7 +14,7 @@
 const EARTH_DIAMETER = 0.1274;
 const SUN_DIAMETER = 13.9;
 const MOON_DIAMETER = 0.0347;
-const SATELLITE_DIAMETER = 0.0000001;
+const SATELLITE_DIAMETER = 0.001;
 
 // Distances
 const EARTH_MOON_DISTANCE = 3.844;
@@ -25,6 +25,9 @@ const GEO_ALTITUDE = 0.35786;
 
 //Height Of
 const ATMOSPHERE_HEIGHT_FROM_EARTH = 0.16371;
+
+//Gravitational Constant
+const G = 0.000001;
 
 //Exporting
 export {
@@ -38,4 +41,5 @@ export {
   LEO_ALTITUDE,
   MEO_ALTITUDE,
   GEO_ALTITUDE,
+  G,
 };

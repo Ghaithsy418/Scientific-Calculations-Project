@@ -1,20 +1,29 @@
 import * as THREE from "three";
 
 export default class SatelliteOrbit {
-  constructor(scene, radius = 30, segments = 128, height = 0.3) {
+  constructor(
+    scene,
+    radius = 0.02,
+    segments = 128,
+    height = 0,
+    earthRadius = 0.5
+  ) {
     this.scene = scene;
     this.radius = radius;
     this.segments = segments;
-    this.height = height;
+    this.height = height; //
+    this.earthRadius = earthRadius;
   }
 
   createSatelliteOrbit() {
     const orbitPoints = [];
 
+    const orbitRadius = this.earthRadius + this.radius;
+
     for (let i = 0; i <= this.segments; i++) {
       const angle = (i / this.segments) * Math.PI * 2;
-      const x = Math.cos(angle) * this.radius;
-      const z = Math.sin(angle) * this.radius;
+      const x = Math.cos(angle) * orbitRadius;
+      const z = Math.sin(angle) * orbitRadius;
       orbitPoints.push(new THREE.Vector3(x, this.height, z));
     }
 
@@ -23,7 +32,7 @@ export default class SatelliteOrbit {
     const orbitLine = new THREE.LineLoop(orbitGeometry, orbitMaterial);
 
     this.scene.add(orbitLine);
-    orbitLine.visible = false;
+    orbitLine.visible = true;
 
     return orbitLine;
   }

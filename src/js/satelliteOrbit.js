@@ -1,9 +1,10 @@
 import * as THREE from "three";
+import { MEO_ALTITUDE } from "./constantDistances";
 
 export default class SatelliteOrbit {
   constructor(
     scene,
-    radius = 0.02,
+    radius = MEO_ALTITUDE,
     segments = 128,
     height = 0,
     earthRadius = 0.5
@@ -11,7 +12,7 @@ export default class SatelliteOrbit {
     this.scene = scene;
     this.radius = radius;
     this.segments = segments;
-    this.height = height; //
+    this.height = height;
     this.earthRadius = earthRadius;
   }
 

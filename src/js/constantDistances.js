@@ -20,11 +20,15 @@ const SATELLITE_DIAMETER = 0.001;
 const EARTH_MOON_DISTANCE = 3.844;
 const EARTH_SUN_DISTANCE = 1496;
 const LEO_ALTITUDE = 0.0016;
-const MEO_ALTITUDE = 0.02;
+const MEO_ALTITUDE = 0.202;
 const GEO_ALTITUDE = 0.35786;
 
+// Earth Properties
+const EARTH_RADIUS = EARTH_DIAMETER / 2;
+const EARTH_MASS = 500; // Arbitrary mass for physics simulation. Tune as needed.
+
 //Height Of
-const ATMOSPHERE_HEIGHT_FROM_EARTH = 0.16371;
+const ATMOSPHERE_HEIGHT_FROM_EARTH = 0.001;
 
 //Gravitational Constant
 const G = 0.000001;
@@ -32,6 +36,8 @@ const G = 0.000001;
 //Exporting
 export {
   EARTH_DIAMETER,
+  EARTH_RADIUS,
+  EARTH_MASS, // <-- Added here
   SUN_DIAMETER,
   MOON_DIAMETER,
   SATELLITE_DIAMETER,

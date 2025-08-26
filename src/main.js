@@ -1,14 +1,19 @@
 import * as dat from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { setupBackgroundAudio } from "./js/audio.js";
+import {
+  EARTH_RADIUS,
+  GEO_ALTITUDE,
+  LEO_ALTITUDE,
+  MEO_ALTITUDE,
+  SATELLITE_DIAMETER,
+} from "./js/constantDistances";
 import Satellite from "./js/Satellite.js";
 import { loadingTextures } from "./js/Textures.js";
 import { setupViewEvents } from "./js/viewEvents.js";
 import Earth from "./planets/Earth.js";
 import Moon from "./planets/Moon.js";
 import Sun from "./planets/Sun.js";
-import { MEO_ALTITUDE, SATELLITE_DIAMETER } from "./js/constantDistances";
 
 // Debug UI
 const gui = new dat.GUI({ title: "GalaxiX" });
@@ -44,7 +49,7 @@ const SatelliteOrbitsFolder = gui.addFolder("Satellites Orbits");
 let satellites = [];
 
 const satelliteConfig = {
-  name: "First Satellite",
+  name: "MEO",
   orbitRadius: MEO_ALTITUDE,
   size: SATELLITE_DIAMETER,
   createSatellite: function () {
@@ -66,7 +71,13 @@ const satelliteConfig = {
 // Add satellite controls to GUI
 const satelliteFolder = gui.addFolder("Satellite Creator");
 satelliteFolder.add(satelliteConfig, "name");
-satelliteFolder.add(satelliteConfig, "orbitRadius", 0.0016, 0.5, 0.01);
+satelliteFolder.add(
+  satelliteConfig,
+  "orbitRadius",
+  LEO_ALTITUDE,
+  GEO_ALTITUDE,
+  0.01
+);
 satelliteFolder.add(satelliteConfig, "size", 0.0001, 0.001, 0.0001);
 satelliteFolder
   .add(satelliteConfig, "createSatellite")
@@ -101,7 +112,6 @@ earthObject.createAtmosphereGlow();
 /*
  * Creating the Sun
  */
-
 const sunObject = new Sun(scene, sunTexture);
 const sun = sunObject.createSun();
 
@@ -128,11 +138,12 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1e5
 );
-camera.position.set(0, 5, 0);
+camera.position.set(0, 2, 0);
+
 scene.add(camera);
 
-// Audio
-setupBackgroundAudio(camera, scene, gui);
+// // Audio
+// setupBackgroundAudio(camera, scene, gui);
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");

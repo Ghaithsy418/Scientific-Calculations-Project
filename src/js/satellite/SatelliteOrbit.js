@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { MEO_ALTITUDE } from "./constantDistances";
+import { MEO_ALTITUDE } from "../constantDistances";
 
 export default class SatelliteOrbit {
   constructor(

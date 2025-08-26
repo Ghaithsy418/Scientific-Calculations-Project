@@ -8,12 +8,12 @@ import {
   MEO_ALTITUDE,
   SATELLITE_DIAMETER,
 } from "./js/constantDistances";
-import Satellite from "./js/Satellite.js";
+import Satellite from "./js/satellite/Satellite.js";
 import { loadingTextures } from "./js/Textures.js";
 import { setupViewEvents } from "./js/viewEvents.js";
-import Earth from "./planets/Earth.js";
-import Moon from "./planets/Moon.js";
-import Sun from "./planets/Sun.js";
+import Earth from "./js/planets/Earth.js";
+import Moon from "./js/planets/Moon.js";
+import Sun from "./js/planets/Sun.js";
 
 // Debug UI
 const gui = new dat.GUI({ title: "GalaxiX" });

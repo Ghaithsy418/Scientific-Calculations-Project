@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { EARTH_SUN_DISTANCE, SUN_DIAMETER } from "../js/constantDistances";
+import { EARTH_SUN_DISTANCE, SUN_DIAMETER } from "../constantDistances";
 
 export default class Sun {
   glowMaterial = null;

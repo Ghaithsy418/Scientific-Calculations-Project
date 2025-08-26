@@ -1,13 +1,14 @@
-// Real physics satellite movement - speedFactor affects actual velocity!
+import * as THREE from "three";
+import { EARTH_MASS, G, EARTH_RADIUS } from "../constantDistances";
+
 export function realisticSatelliteMovements(
   deltaTime,
   earth,
   satellitePosition,
   velocity,
   satelliteModel,
-  speedFactor = 1.0 // Changes actual satellite speed = changes orbit!
+  speedFactor = 1.0
 ) {
-  // Small time steps for numerical stability
   const timeStep = Math.min(deltaTime * 0.01, 1 / 120);
 
   const toEarth = new THREE.Vector3().subVectors(
@@ -16,7 +17,6 @@ export function realisticSatelliteMovements(
   );
   const distance = toEarth.length();
 
-  // Collision with Earth
   if (distance <= EARTH_RADIUS + 0.002) {
     console.log("💥 CRASH! Satellite hit Earth");
     createCrashEffect(
@@ -25,7 +25,6 @@ export function realisticSatelliteMovements(
       earth.parent || satelliteModel.parent
     );
 
-    // Stop satellite
     velocity.set(0, 0, 0);
     satellitePosition.copy(
       earth.position.clone().add(new THREE.Vector3(EARTH_RADIUS + 0.002, 0, 0))
@@ -136,24 +135,14 @@ function createCrashEffect(satelliteModel, position, scene) {
   animateExplosion();
 }
 
-// Escape effect when satellite leaves Earth's gravity
 function createEscapeEffect(satelliteModel, position) {
   console.log("🚀 Creating escape effect...");
-  // You could add a trail effect or other visual feedback here
-}
-import * as THREE from "three";
-import { EARTH_MASS, G, EARTH_RADIUS } from "./constantDistances";
-
-// Calculate the required orbital velocity for a circular orbit at given radius
-export function calculateOrbitalVelocity(
-  orbitRadius,
-  earthMass = EARTH_MASS,
-  gravitationalConstant = G
-) {
-  return Math.sqrt((gravitationalConstant * earthMass) / orbitRadius);
 }
 
-// Initialize satellite with proper orbital velocity (automatically calculated)
+export function calculateOrbitalVelocity(orbitRadius) {
+  return Math.sqrt((G * EARTH_MASS) / orbitRadius);
+}
+
 export function initializeSatelliteOrbit(
   satellitePosition,
   velocity,
@@ -162,21 +151,18 @@ export function initializeSatelliteOrbit(
 ) {
   console.log(`Initializing orbit at radius: ${orbitRadius}`);
 
-  // Set initial position
   satellitePosition.set(orbitRadius, 0, 0);
 
-  // AUTOMATICALLY calculate the exact speed needed for circular orbit
   const requiredOrbitalSpeed = calculateOrbitalVelocity(orbitRadius);
+
   console.log(
     `Required orbital speed for stable orbit: ${requiredOrbitalSpeed.toFixed(
       6
     )}`
   );
 
-  // Set velocity perpendicular to position for circular orbit
   velocity.set(0, 0, requiredOrbitalSpeed);
 
-  // Apply inclination if specified
   if (inclination !== 0) {
     const rotationMatrix = new THREE.Matrix4().makeRotationX(inclination);
     satellitePosition.applyMatrix4(rotationMatrix);
@@ -190,7 +176,6 @@ export function initializeSatelliteOrbit(
   };
 }
 
-// Get the required speed for current altitude (for auto-calculation)
 export function getRequiredSpeedForAltitude(
   satellitePosition,
   earthMass = EARTH_MASS
